@@ -1,7 +1,6 @@
 package com.techbulls.assigmenttask.Adapter;
 
 import android.content.Context;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,13 +13,10 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.squareup.picasso.Picasso;
 import com.techbulls.assigmenttask.MainActivity;
 import com.techbulls.assigmenttask.R;
-import com.techbulls.assigmenttask.model.Movie;
 import com.techbulls.assigmenttask.model.Search;
 
-import java.util.ArrayList;
 import java.util.List;
 
-import de.hdodenhof.circleimageview.CircleImageView;
 
 public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.ViewHolder> {
 
@@ -31,6 +27,7 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.ViewHolder> 
         this.context = mainActivity;
         this.searchList = searchList;
     }
+
     @NonNull
     @Override
     public MovieAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -38,6 +35,7 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.ViewHolder> 
                 .inflate(R.layout.vertical_listview, parent, false);
         return new MovieAdapter.ViewHolder(itemView);
     }
+
     @Override
     public void onBindViewHolder(@NonNull MovieAdapter.ViewHolder holder, int position) {
         Search search = searchList.get(position);
@@ -51,6 +49,7 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.ViewHolder> 
             holder.img.setImageResource(R.drawable.image_not_avilable);
         }
     }
+
     @Override
     public int getItemCount() {
         return searchList.size();
@@ -59,6 +58,7 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.ViewHolder> 
     public class ViewHolder extends RecyclerView.ViewHolder {
         ImageView img;
         TextView title, year;
+
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
             title = (TextView) itemView.findViewById(R.id.title);

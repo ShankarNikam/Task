@@ -5,6 +5,9 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.app.ProgressDialog;
+import android.content.Context;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -46,7 +49,6 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        apiInterface = ApiClient.getApiClient().create(ApiInterface.class);
         movie_serch = (EditText) findViewById(R.id.movie_search);
         search_list = (RecyclerView) findViewById(R.id.search_list);
         progressBar= (ProgressBar) findViewById(R.id.progressBar);
@@ -63,9 +65,13 @@ public class MainActivity extends AppCompatActivity {
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
                 if (charSequence.length()>3)
                     progressBar.setVisibility(View.VISIBLE);
+                if ( isConnectedToNetwork()){
                     searchMovie(charSequence.toString().trim(), apikey);
+                }else {
+                    progressBar.setVisibility(View.GONE);
+                    Toast.makeText(MainActivity.this, "Please check internet connection", Toast.LENGTH_SHORT).show();
+                }
             }
-
             @Override
             public void afterTextChanged(Editable editable) {
 
@@ -73,8 +79,20 @@ public class MainActivity extends AppCompatActivity {
         });
 
     }
-
+    public boolean isConnectedToNetwork() {
+        ConnectivityManager cm = (ConnectivityManager) this.getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetwork =cm.getActiveNetworkInfo();
+        boolean isConnected = activeNetwork != null && activeNetwork.isConnectedOrConnecting();
+        if (isConnected) {
+            return isConnected;
+        } else {
+            return false;
+        }
+    }
     private void searchMovie(String movieName, String apikey) {
+        searchList=new ArrayList<>();
+        addlist(searchList);
+        apiInterface = ApiClient.getApiClient().create(ApiInterface.class);
         apiInterface.getSearchMovie(movieName,apikey).enqueue(new Callback<Movie>() {
             @Override
             public void onResponse(Call<Movie> call, Response<Movie> response) {
@@ -83,9 +101,6 @@ public class MainActivity extends AppCompatActivity {
                     searchList =response.body().getSearch();
                     if (searchList!=null) {
                         addlist(searchList);
-                    }else {
-                        if (movieAdapter!=null)
-                        movieAdapter.notifyDataSetChanged();
                     }
                 }
             }
